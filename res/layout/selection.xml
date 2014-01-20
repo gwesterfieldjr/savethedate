@@ -29,5 +29,15 @@
 	            android:textColor="#333"
 	            android:textSize="18sp" />
 	</LinearLayout>
+	
+	<EditText
+	    android:id="@+id/selection_notice_message"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:layout_margin="10dp"
+	    android:background="@drawable/square_border"
+	    android:hint="@string/selection_notice_message_hint"
+	    />
     
 </LinearLayout>

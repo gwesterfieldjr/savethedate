@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.facebook.Request;
@@ -23,6 +24,7 @@ public class SelectionFragment extends Fragment {
 	
 	private ProfilePictureView profilePictureView;
 	private TextView userNameView;
+	private EditText noticeMessageView;
 	
 	private UiLifecycleHelper uiHelper;
 	private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -43,6 +45,9 @@ public class SelectionFragment extends Fragment {
 	
 	    // Find the user's name view
 	    userNameView = (TextView) view.findViewById(R.id.selection_user_name);
+	    
+	    // The notice message edit text area
+	    noticeMessageView = (EditText) view.findViewById(R.id.selection_notice_message);
 	    
 	    // Check for an open session
 	    Session session = Session.getActiveSession();

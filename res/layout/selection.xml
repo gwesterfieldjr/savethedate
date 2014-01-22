@@ -11,23 +11,41 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="@drawable/square_border"
+        android:layout_margin="15dp" >
         
 	    <com.facebook.widget.ProfilePictureView
-	            android:id="@+id/selection_profile_pic"
-	            android:layout_height="wrap_content"
-	            android:layout_width="wrap_content"
-	            android:layout_gravity="center"
-	            android:gravity="center_horizontal"
-	            facebook:preset_size="small" />
-	    <TextView
+            android:id="@+id/selection_profile_pic"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            facebook:preset_size="small" />
+	    
+	    <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp" >
+	 
+	        <TextView
+	            android:id="@+id/selection_user_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#443266"
+                android:textSize="18sp"
+                android:typeface="serif"
+                android:textStyle="bold" />
+	        
+		    <TextView
 	            android:id="@+id/selection_user_name"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="10dp"
-	            android:layout_gravity="center"
 	            android:textColor="#333"
-	            android:textSize="18sp" />
+	            android:textSize="14sp" />
+	    
+	    </LinearLayout>
+	    
 	</LinearLayout>
 	
 	<EditText
@@ -35,7 +53,7 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="center"
-	    android:layout_margin="10dp"
+	    android:layout_margin="15dp"
 	    android:background="@drawable/square_border"
 	    android:hint="@string/selection_notice_message_hint"
 	    />

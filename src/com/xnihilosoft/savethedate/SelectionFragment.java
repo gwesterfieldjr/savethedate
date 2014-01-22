@@ -24,6 +24,7 @@ public class SelectionFragment extends Fragment {
 	
 	private ProfilePictureView profilePictureView;
 	private TextView userNameView;
+	private TextView userTypeView;
 	private EditText noticeMessageView;
 	
 	private UiLifecycleHelper uiHelper;
@@ -46,7 +47,10 @@ public class SelectionFragment extends Fragment {
 	    // Find the user's name view
 	    userNameView = (TextView) view.findViewById(R.id.selection_user_name);
 	    
-	    // The notice message edit text area
+	    // Find the user's type view
+	    userTypeView = (TextView) view.findViewById(R.id.selection_user_type);
+	    
+	    // Find the notice message edit text area
 	    noticeMessageView = (EditText) view.findViewById(R.id.selection_notice_message);
 	    
 	    // Check for an open session
@@ -73,6 +77,14 @@ public class SelectionFragment extends Fragment {
 	                    profilePictureView.setProfileId(user.getId());
 	                    // Set the Textview's text to the user's name.
 	                    userNameView.setText(user.getName());
+	                    
+	                    // Set the userType TextView text to bride or groom
+	                    String gender = user.asMap().get("gender").toString();
+	                    if (gender.contains("male")) {
+	                    	userTypeView.setText("Groom");
+	                    } else {
+	                    	userTypeView.setText("Bride");
+	                    }
 	                }
 	            }
 	            if (response.getError() != null) {

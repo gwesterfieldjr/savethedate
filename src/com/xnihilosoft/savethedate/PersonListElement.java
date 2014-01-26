@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 
 public abstract class PersonListElement {
-
+	
 	private String profilePictureId;
 	private String type;
 	private String name;

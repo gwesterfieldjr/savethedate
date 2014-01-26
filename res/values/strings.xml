@@ -10,5 +10,11 @@
     <string name="selection_notice_message_hint">Notice message</string>
     <string name="selection_user_type">Bride</string>
     <string name="default_spouse_to_be_name">Who are you marrying?</string>
+    <string name="person_type_groom">Groom</string>
+    <string name="person_type_bride">Bride</string>
+    <string name="person_type_other">Other</string>
+    <string name="error_dialog_title">Error</string>
+	<string name="error_dialog_button_text">OK</string>
+    
 
 </resources>

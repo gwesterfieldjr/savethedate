@@ -1,53 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#C3C3E5" >
     
-	<LinearLayout
+    <ListView
+        android:id="@+id/selection_person_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:background="@drawable/square_border"
-        android:layout_margin="15dp" >
-        
-	    <com.facebook.widget.ProfilePictureView
-            android:id="@+id/selection_profile_pic"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            facebook:preset_size="small" />
-	    
-	    <LinearLayout
-            android:orientation="vertical"
-            android:layout_gravity="center_vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp" >
-	 
-	        <TextView
-	            android:id="@+id/selection_user_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#443266"
-                android:textSize="18sp"
-                android:typeface="serif"
-                android:textStyle="bold" />
-	        
-		    <TextView
-	            android:id="@+id/selection_user_name"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:textColor="#333"
-	            android:textSize="14sp" />
-	    
-	    </LinearLayout>
-	    
-	</LinearLayout>
-	
+        android:layout_margin="15dp"
+        android:divider="@android:color/transparent"
+  		android:dividerHeight="7.5sp"
+        android:background="@drawable/square_border"/>
+   
 	<EditText
 	    android:id="@+id/selection_notice_message"
 	    android:layout_width="fill_parent"
@@ -55,7 +21,6 @@
 	    android:layout_gravity="center"
 	    android:layout_margin="15dp"
 	    android:background="@drawable/square_border"
-	    android:hint="@string/selection_notice_message_hint"
-	    />
+	    android:hint="@string/selection_notice_message_hint"/>
     
 </LinearLayout>

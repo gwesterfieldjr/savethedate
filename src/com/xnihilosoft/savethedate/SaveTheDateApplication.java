@@ -5,7 +5,7 @@ import java.util.List;
 import android.app.Application;
 
 import com.facebook.model.GraphUser;
-import com.xnihilosoft.savethedate.SelectionFragment.WeddingDate;
+import com.xnihilosoft.savethedate.helper.WeddingDate;
 
 public class SaveTheDateApplication extends Application {
 

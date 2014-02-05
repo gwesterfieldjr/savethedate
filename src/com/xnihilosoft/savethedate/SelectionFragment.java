@@ -1,11 +1,8 @@
 package com.xnihilosoft.savethedate;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +38,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
+import com.xnihilosoft.savethedate.helper.WeddingDate;
 import com.xnihilosoft.savethedate.utils.ObjectSerializer;
 
 public class SelectionFragment extends Fragment {
@@ -52,10 +50,7 @@ public class SelectionFragment extends Fragment {
 	public static final int RECIPIENTS_COUNT_CODE = 200;
 	private static final int USER = 0;
 	public static final int SIGNIFICANT_OTHER = 1;
-	
-	// savedInstanceState keys
-	private static final String RECIPIENTS_KEY = "recipients";
-	
+		
 	// Data objects
 	private WeddingDate weddingDate;
 	private GraphUser user = null; 
@@ -66,7 +61,6 @@ public class SelectionFragment extends Fragment {
 	// UI stuff: views, fragments
 	private ListView listView;
 	private List<PersonListElement> personListElements;
-	@SuppressWarnings("unused")
 	private EditText noticeMessageView;
 	@SuppressWarnings("unused")
 	private TextView dateView, weddingDateView, recipientsView, recipientsCountView;
@@ -122,6 +116,8 @@ public class SelectionFragment extends Fragment {
 				return new View.OnClickListener() {
 		            @Override
 		            public void onClick(View view) {
+		            	SaveTheDateApplication app = (SaveTheDateApplication) getActivity().getApplication();
+		            	app.setSignificantOther(significantOther);
 		            	String titleText = new StringBuilder().append("Find your ").append(personListElements.get(SIGNIFICANT_OTHER).getType()).toString();
 		            	startFriendPickerActivity(PickerActivity.FRIEND_PICKER, getRequestCode(), titleText, false);
 		            }
@@ -170,6 +166,8 @@ public class SelectionFragment extends Fragment {
 	    recipientsCountView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				SaveTheDateApplication app = (SaveTheDateApplication) getActivity().getApplication();
+				app.setRecipientsList(selectedRecipientsList);
             	startFriendPickerActivity(PickerActivity.FRIEND_PICKER, RECIPIENTS_COUNT_CODE, "Select your Recipients", true);
 			}
 		});
@@ -379,7 +377,6 @@ public class SelectionFragment extends Fragment {
 		return graphUserList;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private void saveData() {
 		SharedPreferences data = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = data.edit();
@@ -509,50 +506,5 @@ public class SelectionFragment extends Fragment {
 			super.show(manager, DATE_PICKER);
 		}
 	}
-	
-	public class WeddingDate  {
-				
-		private Calendar calendar;
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
-		
-		public WeddingDate() {
-			this.calendar = Calendar.getInstance();
-		}
-		
-		public WeddingDate(int year, int month, int dayOfMonth) {
-			this.calendar = Calendar.getInstance();
-			calendar.set(year, month, dayOfMonth);
-		}
-
-		public int getYear() {
-			return calendar.get(Calendar.YEAR);
-		}
-
-		public void setYear(int year) {
-			calendar.set(Calendar.YEAR, year);
-		}
-
-		public int getMonth() {
-			return calendar.get(Calendar.MONTH);
-		}
-
-		public void setMonth(int month) {
-			calendar.set(Calendar.MONTH, month);
-		}
-
-		public int getDayOfMonth() {
-			return calendar.get(Calendar.DAY_OF_MONTH);
-		}
-
-		public void setDayOfMonth(int dayOfMonth) {
-			calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-		}
-		
-		public String getWeddingDate() {
-			return dateFormat.format(calendar.getTime());
-		}
-		
-	}
-	
 
 }

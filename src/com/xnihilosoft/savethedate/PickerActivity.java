@@ -116,6 +116,7 @@ public class PickerActivity extends FragmentActivity {
 	    toast.show();
 	}
 
+	@SuppressWarnings("unused")
 	private void onError(String error, final boolean finishActivity) {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setTitle(R.string.error_dialog_title).

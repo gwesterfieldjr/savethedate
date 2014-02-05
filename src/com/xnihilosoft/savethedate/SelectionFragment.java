@@ -439,8 +439,7 @@ public class SelectionFragment extends Fragment {
 			if (recipientsList != null) {
 				selectedRecipientsList = restoreGraphUserList(recipientsList);
 			}
-		}
-		
+		}	
 	}
 	
 	private class ActionListAdapter extends ArrayAdapter<PersonListElement> {

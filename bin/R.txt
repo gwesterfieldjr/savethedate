@@ -54,7 +54,7 @@ int drawable com_facebook_list_divider 0x7f02000c
 int drawable com_facebook_list_section_header_background 0x7f02000d
 int drawable com_facebook_loginbutton_silver 0x7f02000e
 int drawable com_facebook_logo 0x7f02000f
-int drawable com_facebook_picker_default_separator_color 0x7f020022
+int drawable com_facebook_picker_default_separator_color 0x7f020023
 int drawable com_facebook_picker_item_background 0x7f020010
 int drawable com_facebook_picker_list_focused 0x7f020011
 int drawable com_facebook_picker_list_longpressed 0x7f020012
@@ -71,8 +71,9 @@ int drawable com_facebook_profile_picture_blank_square 0x7f02001c
 int drawable com_facebook_top_background 0x7f02001d
 int drawable com_facebook_top_button 0x7f02001e
 int drawable com_facebook_usersettingsfragment_background_gradient 0x7f02001f
-int drawable ic_launcher 0x7f020020
-int drawable square_border 0x7f020021
+int drawable ic_action_overflow 0x7f020020
+int drawable ic_launcher 0x7f020021
+int drawable square_border 0x7f020022
 int id action_settings 0x7f040027
 int id com_facebook_login_activity_progress_bar 0x7f040005
 int id com_facebook_picker_activity_circle 0x7f040004
@@ -96,6 +97,7 @@ int id com_facebook_usersettingsfragment_logo_image 0x7f040015
 int id com_facebook_usersettingsfragment_profile_name 0x7f040016
 int id large 0x7f040002
 int id login_button 0x7f040026
+int id logoutFragment 0x7f04001a
 int id normal 0x7f040001
 int id person_name 0x7f04001d
 int id person_profile_pic 0x7f04001b
@@ -112,7 +114,6 @@ int id selection_recipients_count 0x7f040024
 int id selection_wedding_date 0x7f040022
 int id small 0x7f040000
 int id splashFragment 0x7f040019
-int id userSettingsFragment 0x7f04001a
 int layout com_facebook_friendpickerfragment 0x7f030000
 int layout com_facebook_login_activity_layout 0x7f030001
 int layout com_facebook_picker_activity_circle_row 0x7f030002
@@ -168,6 +169,7 @@ int string default_spouse_to_be_name 0x7f070021
 int string error_dialog_button_text 0x7f070026
 int string error_dialog_title 0x7f070025
 int string get_started 0x7f07001c
+int string logout 0x7f07001e
 int string multiple_users_selected 0x7f07002c
 int string person_type_bride 0x7f070023
 int string person_type_groom 0x7f070022
@@ -182,7 +184,6 @@ int string saved_wedding_month 0x7f07002e
 int string saved_wedding_year 0x7f07002f
 int string selection_notice_message_hint 0x7f07001f
 int string selection_user_type 0x7f070020
-int string settings 0x7f07001e
 int string single_user_selected 0x7f07002a
 int string title_activity_splash 0x7f07001d
 int string two_users_selected 0x7f07002b

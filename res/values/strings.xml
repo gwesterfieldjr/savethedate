@@ -6,7 +6,7 @@
     <string name="app_id">605681339505094</string>
     <string name="get_started">To get started, log in using Facebook</string>
     <string name="title_activity_splash">SplashActivity</string>
-    <string name="settings">Settings</string>
+    <string name="logout">Log out</string>
     <string name="selection_notice_message_hint">Notice message</string>
     <string name="selection_user_type">Bride</string>
     <string name="default_spouse_to_be_name">Who are you marrying?</string>

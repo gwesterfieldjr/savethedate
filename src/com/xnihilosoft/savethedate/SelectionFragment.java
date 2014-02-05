@@ -208,9 +208,6 @@ public class SelectionFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 	    super.onSaveInstanceState(bundle);
-	    //if (selectedRecipientsList != null) {
-	      //  bundle.putByteArray(RECIPIENTS_KEY, getByteArray(selectedRecipientsList));
-	    //} 
 	    uiHelper.onSaveInstanceState(bundle);
 	}
 

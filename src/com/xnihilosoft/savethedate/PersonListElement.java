@@ -1,5 +1,7 @@
 package com.xnihilosoft.savethedate;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.BaseAdapter;
 
@@ -66,5 +68,17 @@ public abstract class PersonListElement {
 	}
 	
 	protected abstract View.OnClickListener getOnClickListener();
+	
+	protected void onActivityResult(Intent data) {}
+
+	protected void onSaveInstanceState(Bundle bundle) {}
+
+	protected boolean restoreState(Bundle savedState) {
+	    return false;
+	}
+
+	protected void notifyDataChanged() {
+	    adapter.notifyDataSetChanged();
+	}
 	
 }

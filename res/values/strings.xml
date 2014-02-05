@@ -15,6 +15,22 @@
     <string name="person_type_other">Other</string>
     <string name="error_dialog_title">Error</string>
 	<string name="error_dialog_button_text">OK</string>
-    
+	<string name="date">Date:</string>
+	<string name="recipients">Recipients:</string>
+	<string name="default_recipients_count">Select recipients</string>
+	<string name="single_user_selected">%1$s</string>
+	<string name="two_users_selected">%1$s and %2$s</string>
+	<string name="multiple_users_selected">%1$s and %2$s others</string>
+	
+	<string name="saved_wedding_day">saved_wedding_day</string>
+	<string name="saved_wedding_month">saved_wedding_month</string>  
+	<string name="saved_wedding_year">saved_wedding_year</string>
+	
+	<string name="saved_notice_message">saved_notice_message</string>
+	
+	<string name="saved_user">saved_user</string>
+	<string name="saved_significant_other">saved_significant_other</string>
+	
+	<string name="saved_recipients_list">saved_recipients_list</string>
 
 </resources>

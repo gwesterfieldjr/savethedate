@@ -35,6 +35,7 @@
             android:layout_marginTop="35dp"
             android:lines="2"
             android:textSize="17sp"
+            android:textColor="#000000"
             android:text="@string/get_started"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"/>

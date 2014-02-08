@@ -183,6 +183,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_profile_picture_width=0x7f050002;
     }
     public static final class drawable {
+        public static final int actionbar_background_color=0x7f020024;
         public static final int com_facebook_button_blue=0x7f020000;
         public static final int com_facebook_button_blue_focused=0x7f020001;
         public static final int com_facebook_button_blue_normal=0x7f020002;
@@ -285,7 +286,7 @@ containing a value of this type.
     }
     public static final class menu {
         public static final int main=0x7f090000;
-        public static final int splash=0x7f090001;
+        public static final int selection=0x7f090001;
     }
     public static final class string {
         public static final int action_settings=0x7f07001a;
@@ -342,16 +343,10 @@ containing a value of this type.
         public static final int two_users_selected=0x7f07002b;
     }
     public static final class style {
+        /**  ActionBar styles 
+         */
+        public static final int ActionBarStyle=0x7f080003;
         /** 
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
-
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     
@@ -363,11 +358,10 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f080002;
+        public static final int AppBaseTheme=0x7f080004;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080003;
+        public static final int AppTheme=0x7f080002;
         public static final int com_facebook_loginview_default_style=0x7f080000;
         public static final int com_facebook_loginview_silver_style=0x7f080001;
     }

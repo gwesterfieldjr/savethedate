@@ -138,7 +138,7 @@ public class MainActivity extends FragmentActivity {
 	        showFragment(SPLASH, false);
 	    }
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 	    // only add the menu when the selection fragment is showing

@@ -46,4 +46,8 @@ public class WeddingDate  {
 		return dateFormat.format(calendar.getTime());
 	}
 	
+	public String getWeddingDate(SimpleDateFormat format) {
+		return format.format(calendar.getTime());
+	}
+	
 }

@@ -183,7 +183,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_profile_picture_width=0x7f050002;
     }
     public static final class drawable {
-        public static final int actionbar_background_color=0x7f020024;
+        public static final int actionbar_background_color=0x7f020025;
         public static final int com_facebook_button_blue=0x7f020000;
         public static final int com_facebook_button_blue_focused=0x7f020001;
         public static final int com_facebook_button_blue_normal=0x7f020002;
@@ -200,7 +200,7 @@ containing a value of this type.
         public static final int com_facebook_list_section_header_background=0x7f02000d;
         public static final int com_facebook_loginbutton_silver=0x7f02000e;
         public static final int com_facebook_logo=0x7f02000f;
-        public static final int com_facebook_picker_default_separator_color=0x7f020023;
+        public static final int com_facebook_picker_default_separator_color=0x7f020024;
         public static final int com_facebook_picker_item_background=0x7f020010;
         public static final int com_facebook_picker_list_focused=0x7f020011;
         public static final int com_facebook_picker_list_longpressed=0x7f020012;
@@ -219,10 +219,11 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_background_gradient=0x7f02001f;
         public static final int ic_action_overflow=0x7f020020;
         public static final int ic_launcher=0x7f020021;
-        public static final int square_border=0x7f020022;
+        public static final int square_border_purple=0x7f020022;
+        public static final int square_border_white=0x7f020023;
     }
     public static final class id {
-        public static final int action_settings=0x7f040027;
+        public static final int action_settings=0x7f04002a;
         public static final int com_facebook_login_activity_progress_bar=0x7f040005;
         public static final int com_facebook_picker_activity_circle=0x7f040004;
         public static final int com_facebook_picker_checkbox=0x7f040007;
@@ -244,7 +245,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_logo_image=0x7f040015;
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f040016;
         public static final int large=0x7f040002;
-        public static final int login_button=0x7f040026;
+        public static final int login_button=0x7f040029;
         public static final int logoutFragment=0x7f04001a;
         public static final int normal=0x7f040001;
         public static final int person_name=0x7f04001d;
@@ -252,14 +253,17 @@ containing a value of this type.
         public static final int person_type=0x7f04001c;
         public static final int picker_fragment=0x7f04001e;
         public static final int picker_subtitle=0x7f040012;
-        public static final int profile_name=0x7f040025;
+        public static final int profile_name=0x7f040028;
         public static final int selectionFragment=0x7f040018;
         public static final int selection_date=0x7f040021;
         public static final int selection_notice_message=0x7f040020;
         public static final int selection_person_list=0x7f04001f;
-        public static final int selection_recipients=0x7f040023;
-        public static final int selection_recipients_count=0x7f040024;
+        public static final int selection_photo=0x7f040023;
+        public static final int selection_recipients=0x7f040025;
+        public static final int selection_recipients_count=0x7f040026;
+        public static final int selection_save_the_date_button=0x7f040027;
         public static final int selection_wedding_date=0x7f040022;
+        public static final int selection_wedding_photo=0x7f040024;
         public static final int small=0x7f040000;
         public static final int splashFragment=0x7f040019;
     }
@@ -289,6 +293,10 @@ containing a value of this type.
         public static final int selection=0x7f090001;
     }
     public static final class string {
+        public static final int action_photo_camera=0x7f070029;
+        public static final int action_photo_default=0x7f070027;
+        public static final int action_photo_gallery=0x7f07002a;
+        public static final int action_photo_ready=0x7f070028;
         public static final int action_settings=0x7f07001a;
         public static final int app_id=0x7f07001b;
         public static final int app_name=0x7f070019;
@@ -317,30 +325,37 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_log_in_button=0x7f070008;
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f070009;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f07000a;
-        public static final int date=0x7f070027;
-        public static final int default_recipients_count=0x7f070029;
+        public static final int date=0x7f07002c;
+        public static final int default_recipients_count=0x7f07002f;
         public static final int default_spouse_to_be_name=0x7f070021;
+        public static final int default_wedding_photo=0x7f070030;
         public static final int error_dialog_button_text=0x7f070026;
         public static final int error_dialog_title=0x7f070025;
         public static final int get_started=0x7f07001c;
         public static final int logout=0x7f07001e;
-        public static final int multiple_users_selected=0x7f07002c;
+        public static final int multiple_users_selected=0x7f070033;
         public static final int person_type_bride=0x7f070023;
         public static final int person_type_groom=0x7f070022;
         public static final int person_type_other=0x7f070024;
-        public static final int recipients=0x7f070028;
-        public static final int saved_notice_message=0x7f070030;
-        public static final int saved_recipients_list=0x7f070033;
-        public static final int saved_significant_other=0x7f070032;
-        public static final int saved_user=0x7f070031;
-        public static final int saved_wedding_day=0x7f07002d;
-        public static final int saved_wedding_month=0x7f07002e;
-        public static final int saved_wedding_year=0x7f07002f;
+        public static final int photo=0x7f07002d;
+        public static final int recipients=0x7f07002e;
+        public static final int saved_event_id=0x7f070038;
+        public static final int saved_notice_message=0x7f07003b;
+        public static final int saved_photo_uri=0x7f070039;
+        public static final int saved_recipients_list=0x7f07003e;
+        public static final int saved_significant_other=0x7f07003d;
+        public static final int saved_temp_uri=0x7f07003a;
+        public static final int saved_user=0x7f07003c;
+        public static final int saved_wedding_day=0x7f070035;
+        public static final int saved_wedding_month=0x7f070036;
+        public static final int saved_wedding_year=0x7f070037;
+        public static final int select_picture=0x7f07002b;
+        public static final int selected_user_count=0x7f070034;
         public static final int selection_notice_message_hint=0x7f07001f;
         public static final int selection_user_type=0x7f070020;
-        public static final int single_user_selected=0x7f07002a;
+        public static final int single_user_selected=0x7f070031;
         public static final int title_activity_splash=0x7f07001d;
-        public static final int two_users_selected=0x7f07002b;
+        public static final int two_users_selected=0x7f070032;
     }
     public static final class style {
         /**  ActionBar styles 

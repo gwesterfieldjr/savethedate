@@ -1,21 +1,31 @@
 package com.xnihilosoft.savethedate;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,11 +35,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -48,6 +61,7 @@ public class SelectionFragment extends Fragment {
 	// Request Codes
 	private static final int REAUTH_ACTIVITY_CODE = 100;
 	public static final int RECIPIENTS_COUNT_CODE = 200;
+	private static final int PHOTO_CODE = 300;
 	private static final int USER = 0;
 	public static final int SIGNIFICANT_OTHER = 1;
 		
@@ -57,13 +71,17 @@ public class SelectionFragment extends Fragment {
 	private GraphUser significantOther = null;
 	private List<GraphUser> selectedRecipientsList = null;
 	private String noticeMessage = "";
+	private String eventId = "";
+	private Uri photoUri = null;
+	private Uri tempUri = null;
 	
 	// UI stuff: views, fragments
 	private ListView listView;
 	private List<PersonListElement> personListElements;
 	private EditText noticeMessageView;
 	@SuppressWarnings("unused")
-	private TextView dateView, weddingDateView, recipientsView, recipientsCountView;
+	private TextView dateView, weddingDateView, recipientsView, recipientsCountView, photoView, weddingPhotoView;
+	private Button saveTheDateButton;
 	private DatePickerFragment datePickerFragment;
 	
 	// Facebook login handle objects
@@ -160,6 +178,17 @@ public class SelectionFragment extends Fragment {
 			}
 		});
 	    
+	    photoView = (TextView) view.findViewById(R.id.selection_photo);
+	    
+	    weddingPhotoView = (TextView) view.findViewById(R.id.selection_wedding_photo);
+	    
+	    weddingPhotoView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				 showPhotoChoice();
+			}
+		});
+	    
 	    recipientsView = (TextView) view.findViewById(R.id.selection_recipients);
 	    
 	    recipientsCountView = (TextView) view.findViewById(R.id.selection_recipients_count);
@@ -169,6 +198,18 @@ public class SelectionFragment extends Fragment {
 				SaveTheDateApplication app = (SaveTheDateApplication) getActivity().getApplication();
 				app.setRecipientsList(selectedRecipientsList);
             	startFriendPickerActivity(PickerActivity.FRIEND_PICKER, RECIPIENTS_COUNT_CODE, "Select your Recipients", true);
+			}
+		});
+	    
+	    saveTheDateButton = (Button) view.findViewById(R.id.selection_save_the_date_button);
+	    saveTheDateButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (eventId.isEmpty()) {
+					createEvent(Session.getActiveSession());
+				} else {
+					showUpdateEventChoice();
+				}
 			}
 		});
 	    	    
@@ -182,6 +223,8 @@ public class SelectionFragment extends Fragment {
 	    		updatePersonListElements();
 	    	}
 	    }
+	    
+	    updateWeddingPhotoView();
 	    
 	    if (selectedRecipientsList != null) {
 	    	updateRecipientsCountView();
@@ -212,13 +255,13 @@ public class SelectionFragment extends Fragment {
 	@Override
 	public void onPause() {
 	    super.onPause();
+	    saveData();
 	    uiHelper.onPause();
 	}
 
 	@Override
 	public void onDestroy() {
 	    super.onDestroy();
-	    saveData();
 	    uiHelper.onDestroy();
 	}
 	
@@ -227,16 +270,135 @@ public class SelectionFragment extends Fragment {
 	    super.onActivityResult(requestCode, resultCode, data);
 	    if (requestCode == REAUTH_ACTIVITY_CODE) {
 	      uiHelper.onActivityResult(requestCode, resultCode, data);
-	    } else if (resultCode == Activity.RESULT_OK) {
-	        if (requestCode == RECIPIENTS_COUNT_CODE) {
-	        	selectedRecipientsList = ((SaveTheDateApplication) getActivity().getApplication()).getRecipientsList();
-	        	updateRecipientsCountView();
-	        } else if (requestCode == SIGNIFICANT_OTHER) {
-	        	personListElements.get(SIGNIFICANT_OTHER).onActivityResult(data);
-	        }
+	    } if (requestCode == RECIPIENTS_COUNT_CODE) {
+	    	if (resultCode == Activity.RESULT_OK) {
+	    		selectedRecipientsList = ((SaveTheDateApplication) getActivity().getApplication()).getRecipientsList();
+	    		updateRecipientsCountView();
+	    	}
+        } else if (requestCode == SIGNIFICANT_OTHER) {
+        	if (resultCode == Activity.RESULT_OK) {
+        		personListElements.get(SIGNIFICANT_OTHER).onActivityResult(data);
+        	}
+        } else if (requestCode == PHOTO_CODE) {
+	    	if (tempUri != null) {
+                photoUri = tempUri;
+            } else if (data != null) {
+                photoUri = data.getData();
+            }
+            updateWeddingPhotoView();
 	    }
 	}
 
+	private void createEvent(final Session session) {
+		Bundle params = new Bundle();
+		params.putString("name", "TEST: Save the Date (" + user.getName() + " & " + significantOther.getName() + ")" );
+		params.putString("start_time", weddingDate.getWeddingDate(new SimpleDateFormat("yyyy-MM-dd", Locale.US)));
+		params.putString("description", noticeMessageView.getText().toString());
+		params.putString("privacy_type", "SECRET");
+		
+		if (session != null && session.isOpened()) {
+			/* make the API call */
+			Toast.makeText(getActivity(), "Creating Facebook event...", Toast.LENGTH_LONG).show();
+			new Request(session, "/me/events", params, HttpMethod.POST,
+			    new Request.Callback() {
+			        public void onCompleted(Response response) {
+			        	eventId = response.getGraphObject().getProperty("id").toString();
+		        		if (!eventId.isEmpty() && eventId != null) {
+		        			inviteRecipients(session);
+		        			uploadEventPicture(session);
+		        		}
+		        		
+			        	if (response.getError() != null) {
+			        		Log.e(TAG, response.getError().toString());
+			        	} 
+			        }
+			    }
+			).executeAsync();
+		}
+	}
+	
+	private void inviteRecipients(final Session session) {
+		if ( session != null && session.isOpened() && selectedRecipientsList != null && selectedRecipientsList.size() > 0) {
+			for (GraphUser recipient : selectedRecipientsList) {
+				new Request(session, getInviteRecipientRequest(recipient), null, HttpMethod.POST,
+					    new Request.Callback() {
+					        public void onCompleted(Response response) {
+					        	if (response.getError() != null) {
+					        		Log.e(TAG, response.getError().toString());
+					        	}
+					        }
+					    }
+					).executeAsync();
+			}
+		}
+	}
+	
+	private String getInviteRecipientRequest(GraphUser recipient) {
+		return new StringBuilder("").append("/").append(eventId).append("/invited/").append(recipient.getId()).toString();
+	}
+	
+	private void uploadEventPicture(final Session session) {
+		if (photoUri != null) {
+			Bundle params = new Bundle();
+			params.putParcelable("source", getImageFormData(getWeddingPhotoFile()));
+			if ( session != null && session.isOpened()) {
+				new Request(session, "/" + eventId + "/picture", params, HttpMethod.POST,
+					    new Request.Callback() {
+					        public void onCompleted(Response response) {
+					        	if (response.getError() != null) {
+					        		Log.e(TAG, response.getError().toString());
+					        	}
+					        }
+					    }
+				).executeAsync();
+			}
+		} 
+	}
+	
+	private Bitmap getImageFormData(File image) {
+	    return BitmapFactory.decodeFile(image.getPath());
+	}
+	
+	private void updateEvent(final Session session) {
+		Bundle params = new Bundle();
+		params.putString("start_time", weddingDate.getWeddingDate(new SimpleDateFormat("yyyy-MM-dd", Locale.US)));
+		params.putString("description", noticeMessageView.getText().toString());
+		Toast.makeText(getActivity(), "Updating Facebook event...", Toast.LENGTH_LONG).show();
+		if (session != null && session.isOpened()) {
+			/* make the API call */
+			new Request(session, "/" + eventId, params, HttpMethod.POST,
+			    new Request.Callback() {
+			        public void onCompleted(Response response) {
+			        	if (response.getError() != null) {
+			        		Log.e(TAG, response.getError().toString());
+			        	} 
+			        }
+			    }
+			).executeAsync();
+			inviteRecipients(session);
+			uploadEventPicture(session);
+		}
+	}
+	
+	private void showUpdateEventChoice() {		
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        CharSequence update = "Update";
+        CharSequence cancel = "Cancel";
+        builder.setTitle("Update Facebook Event").setMessage("Are you sure you want to update the event?")
+        .setCancelable(false).setPositiveButton(update, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				updateEvent(Session.getActiveSession());
+			}
+		}).setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// Do nothing
+			}
+		});
+        builder.show();
+    }
+	
 	private void makeMeRequest(final Session session) {
 	    // Make an API call to get user data and define a 
 	    // new callback to handle the response.
@@ -256,12 +418,32 @@ public class SelectionFragment extends Fragment {
 	                }
 	            }
 	            if (response.getError() != null) {
-	                // Handle errors, will do so later.
+	                Log.e(TAG, response.getError().toString());
 	            }
 	            updatePersonListElements();
 	        }
 	    });
 	    request.executeAsync();
+	}
+	
+	private File getWeddingPhotoFile() {
+		File photoFile = null;
+        String photoUriString = photoUri.toString();
+        if (photoUriString.startsWith("file://")) {
+            photoFile = new File(photoUri.getPath());
+        } else if (photoUriString.startsWith("content://")) {
+            String [] filePath = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getActivity().getContentResolver().query(photoUri, filePath, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePath[0]);
+                String filename = cursor.getString(columnIndex);
+                cursor.close();
+
+                photoFile = new File(filename);
+            }
+        }
+        return photoFile;
 	}
 	
 	private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
@@ -314,22 +496,25 @@ public class SelectionFragment extends Fragment {
 		weddingDateView.setText(weddingDate.getWeddingDate());
 	}
 	
+	private void updateWeddingPhotoView() {
+		if (photoUri == null) {
+            weddingPhotoView.setText((getResources().getString(R.string.action_photo_default)));
+        } else {
+            weddingPhotoView.setText((getResources().getString(R.string.action_photo_ready)));
+        }
+	}
+	
 	private void updateRecipientsCountView() {
 		String text = null;
 	    if ( selectedRecipientsList != null) {
 	            // If there is one friend
 	        if (selectedRecipientsList.size() == 1) {
 	            text = String.format(getResources().getString(R.string.single_user_selected), selectedRecipientsList.get(0).getName());
-	        } else if (selectedRecipientsList.size() == 2) {
-	            // If there are two friends 
-	            text = String.format(getResources().getString(R.string.two_users_selected),
-	                    selectedRecipientsList.get(0).getName(), selectedRecipientsList.get(1).getName());
-	        } else if (selectedRecipientsList.size() > 2) {
-	            // If there are more than two friends 
-	            text = String.format(getResources().getString(R.string.multiple_users_selected), 
-	            		selectedRecipientsList.get(0).getName(), (selectedRecipientsList.size() - 1));
-	        }   
-	    }   
+	        } else if (selectedRecipientsList.size() >= 2) {
+	            // If there are two or more friends 
+	            text = String.format(getResources().getString(R.string.selected_user_count), (selectedRecipientsList.size()));
+	        }	        
+	    }  
 	    if (text == null) {
 	        // If no text, use the placeholder text
 	        text = getResources().getString(R.string.default_recipients_count);
@@ -377,6 +562,51 @@ public class SelectionFragment extends Fragment {
 		return graphUserList;
 	}
 	
+	private void showPhotoChoice() {		
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        CharSequence camera = getResources().getString(R.string.action_photo_camera);
+        CharSequence gallery = getResources().getString(R.string.action_photo_gallery);
+        builder.setCancelable(true).
+                setItems(new CharSequence[] {camera, gallery}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 0) {
+                            startCameraActivity();
+                        } else if (i == 1) {
+                            startGalleryActivity();
+                        }
+                    }
+                });
+        builder.show();
+    }
+	
+	private void startCameraActivity() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        tempUri = getTempUri();
+        if (tempUri != null) {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
+        }
+        startActivityForResult(intent, PHOTO_CODE);
+    }
+
+    private void startGalleryActivity() {
+        tempUri = null;
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        String selectPicture = getResources().getString(R.string.select_picture);
+        startActivityForResult(Intent.createChooser(intent, selectPicture), PHOTO_CODE);
+    }
+
+    private Uri getTempUri() {
+    	String FILE_PREFIX = "savethedate_img_";
+        String FILE_SUFFIX = ".jpg";
+        String imgFileName = FILE_PREFIX + System.currentTimeMillis() + FILE_SUFFIX;
+
+        File image = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), imgFileName);
+        return Uri.fromFile(image);
+    }
+	
 	private void saveData() {
 		SharedPreferences data = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = data.edit();
@@ -389,14 +619,26 @@ public class SelectionFragment extends Fragment {
 		editor.putString(getString(R.string.saved_notice_message), noticeMessageView.getText().toString());
 		
 		// The user
-		editor.putString(getString(R.string.saved_user), getGraphUserString(user));
+		if (user != null) {
+			editor.putString(getString(R.string.saved_user), getGraphUserString(user));
+		}
 		
 		// The significant other
-		editor.putString(getString(R.string.saved_significant_other), getGraphUserString(significantOther));
+		if (significantOther != null) {
+			editor.putString(getString(R.string.saved_significant_other), getGraphUserString(significantOther));
+		}
 		
+		editor.putString(getString(R.string.saved_event_id), eventId);
+		
+		if (photoUri != null) {
+			editor.putString(getString(R.string.saved_photo_uri), photoUri.toString());
+		}
+				
 		// The recipients list
 		try {
-			editor.putString(getString(R.string.saved_recipients_list), ObjectSerializer.serialize((ArrayList<String>) getGraphUserList(selectedRecipientsList)));
+			if (selectedRecipientsList != null) {
+				editor.putString(getString(R.string.saved_recipients_list), ObjectSerializer.serialize((ArrayList<String>) getGraphUserList(selectedRecipientsList)));
+			}
 		} catch (IOException e) {
 			Log.e(TAG, "Unable to serialize recipients list: " + e.getMessage());
 		}
@@ -426,6 +668,13 @@ public class SelectionFragment extends Fragment {
 		String savedSignificantOther = data.getString(getString(R.string.saved_significant_other), null);
 		if (savedSignificantOther != null) {
 			significantOther = restoreGraphUser(savedSignificantOther);
+		}
+		
+		eventId = data.getString(getString(R.string.saved_event_id), "");
+		
+		String savedPhotoUri = data.getString(getString(R.string.saved_photo_uri), null);
+		if (savedPhotoUri != null) {
+			photoUri = Uri.parse(savedPhotoUri);
 		}
 		
 		String savedRecipientsList = data.getString(getString(R.string.saved_recipients_list), null);

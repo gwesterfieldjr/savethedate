@@ -17,13 +17,22 @@ public class SplashFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    View view = inflater.inflate(R.layout.splash, container, false);
 	    
-	    List<String> permissions = new ArrayList<String>();
-	    permissions.add("user_relationship_details");
-	    permissions.add("user_friends");
-	    permissions.add("user_relationships");
+	    List<String> readPermissions = new ArrayList<String>();
+	    readPermissions.add("user_relationship_details");
+	    readPermissions.add("user_friends");
+	    readPermissions.add("user_relationships");
+	    readPermissions.add("user_events");
+	    readPermissions.add("friends_events");
+	    
+	    List<String> publishPermissions = new ArrayList<String>();
+	    publishPermissions.add("create_event");
+	    publishPermissions.add("rsvp_event");
+	    publishPermissions.add("publish_actions");
 	    
 	    LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
-	    loginButton.setReadPermissions(permissions);
+	    loginButton.setReadPermissions(readPermissions);
+	    loginButton.clearPermissions();
+	    loginButton.setPublishPermissions(publishPermissions);
 	    
 	    return view;
 	}

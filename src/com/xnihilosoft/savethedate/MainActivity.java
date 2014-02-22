@@ -27,6 +27,8 @@ public class MainActivity extends FragmentActivity {
 	private static final int FRAGMENT_COUNT = 4;
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 	private MenuItem logout;
+	private MenuItem updateEvent;
+	private MenuItem countdown;
 	
 	private String eventId = "";
 	
@@ -187,14 +189,33 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 	    // only add the menu when the selection fragment is showing
-	    if (fragments[SELECTION].isVisible() || fragments[POST_SELECTION].isVisible()) {
-	        if (menu.size() == 0) {
+	    if (fragments[SELECTION].isVisible()) {
+	    	if (menu.size() == 0) {
 	        	logout = menu.add(R.string.logout);
+	        	countdown = menu.add("View Countdown");
+	        } else {
+	        	menu.clear();
+	    		logout = menu.add(R.string.logout);
+	    		countdown = menu.add("View Countdown");
+	    		updateEvent = null;
 	        }
-	        return true;
+	    	return true;
+	    } else if (fragments[POST_SELECTION].isVisible()) {
+	    	if (menu.size() == 0 ) {
+	    		logout = menu.add(R.string.logout);
+	    		updateEvent = menu.add("Update Notice");
+	    	} else {
+	    		menu.clear();
+	    		logout = menu.add(R.string.logout);
+	    		updateEvent = menu.add("Update Notice");
+	    		countdown = null;
+	    	}
+        	return true;
 	    } else {
 	        menu.clear();
 	        logout = null;
+	        updateEvent = null;
+	        countdown = null;
 	    }
 	    return false;
 	}
@@ -202,8 +223,14 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    if (item.equals(logout)) {
-	        showFragment(LOGOUT, true);
+	        showFragment(LOGOUT, false);
 	        return true;
+	    } else if (item.equals(updateEvent)) {
+	    	showFragment(SELECTION, false);
+	    	return true;
+	    } else if (item.equals(countdown)) {
+	    	showFragment(POST_SELECTION, false);
+	    	return true;
 	    }
 	    return false;
 	}
@@ -217,6 +244,7 @@ public class MainActivity extends FragmentActivity {
 		PostSelectionFragment postSelectionFragment = (PostSelectionFragment) fragments[POST_SELECTION];
 		postSelectionFragment.updateWeddingDateView(weddingDate);
 		postSelectionFragment.updateWeddingDayCountView(weddingDate);
+		showFragment(POST_SELECTION, false);
 	}
 	
 	private void onCreatedEvent(String eventId, WeddingDate weddingDate) {

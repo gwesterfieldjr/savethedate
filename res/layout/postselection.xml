@@ -8,7 +8,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-    	android:layout_centerVertical="true"
+    	android:layout_centerInParent="true"
     	android:background="#C3C3E5">
 
         <TextView
@@ -16,11 +16,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:layout_marginBottom="25dp"
             android:background="@drawable/circle_border_white"
             android:text="@string/postselection_days_till_wedding_count"
             android:textColor="#443266"
-            android:textSize="60sp"
+            android:textSize="64sp"
             android:textStyle="bold"
             android:typeface="serif" />
 
@@ -29,10 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="100dp"
             android:text="@string/postselection_days_till_wedding"
             android:textColor="#443266"
-            android:textSize="26sp"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:typeface="serif" />
     </LinearLayout>

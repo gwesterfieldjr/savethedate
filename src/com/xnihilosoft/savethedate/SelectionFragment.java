@@ -83,6 +83,12 @@ public class SelectionFragment extends Fragment {
 	private TextView dateView, weddingDateView, recipientsView, recipientsCountView, photoView, weddingPhotoView;
 	private Button saveTheDateButton;
 	private DatePickerFragment datePickerFragment;
+	private OnEventChangeListener onEventChangeListener;
+	
+	public interface OnEventChangeListener {
+		public void onEventCreated(String eventId, WeddingDate weddingDate);
+		public void onEventUpdated(WeddingDate weddingDate);
+	}
 	
 	// Facebook login handle objects
 	private UiLifecycleHelper uiHelper;
@@ -156,7 +162,7 @@ public class SelectionFragment extends Fragment {
 	    // Find the wedding date text view
 	    weddingDateView = (TextView) view.findViewById(R.id.selection_wedding_date);
 		// Initially set to current day
-	    weddingDateView.setText(weddingDate.getWeddingDate());
+	    weddingDateView.setText(weddingDate.toString());
 	    
 	    weddingDateView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -266,6 +272,16 @@ public class SelectionFragment extends Fragment {
 	}
 	
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			onEventChangeListener = (OnEventChangeListener) (((MainActivity) activity).getOnEventChangeListener());
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " implement/supply a reference to OnEventChangeListener\n" + e.getMessage());
+		}
+	}
+	
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 	    if (requestCode == REAUTH_ACTIVITY_CODE) {
@@ -289,10 +305,14 @@ public class SelectionFragment extends Fragment {
 	    }
 	}
 
+	/**
+	 * Creates a Save the Date event on Facebook
+	 * @param session
+	 */
 	private void createEvent(final Session session) {
 		Bundle params = new Bundle();
 		params.putString("name", "TEST: Save the Date (" + user.getName() + " & " + significantOther.getName() + ")" );
-		params.putString("start_time", weddingDate.getWeddingDate(new SimpleDateFormat("yyyy-MM-dd", Locale.US)));
+		params.putString("start_time", weddingDate.getDate(new SimpleDateFormat("yyyy-MM-dd", Locale.US)));
 		params.putString("description", noticeMessageView.getText().toString());
 		params.putString("privacy_type", "SECRET");
 		
@@ -306,6 +326,7 @@ public class SelectionFragment extends Fragment {
 		        		if (!eventId.isEmpty() && eventId != null) {
 		        			inviteRecipients(session);
 		        			uploadEventPicture(session);
+		        			onEventChangeListener.onEventCreated(eventId, weddingDate);
 		        		}
 		        		
 			        	if (response.getError() != null) {
@@ -317,6 +338,10 @@ public class SelectionFragment extends Fragment {
 		}
 	}
 	
+	/**
+	 * Invites all of the selected users to the Save the Date event on Facebook
+	 * @param session
+	 */
 	private void inviteRecipients(final Session session) {
 		if ( session != null && session.isOpened() && selectedRecipientsList != null && selectedRecipientsList.size() > 0) {
 			for (GraphUser recipient : selectedRecipientsList) {
@@ -333,10 +358,19 @@ public class SelectionFragment extends Fragment {
 		}
 	}
 	
+	/**
+	 * Creates the post request for inviting a user
+	 * @param recipient
+	 * @return the recipient request for the recipient
+	 */
 	private String getInviteRecipientRequest(GraphUser recipient) {
 		return new StringBuilder("").append("/").append(eventId).append("/invited/").append(recipient.getId()).toString();
 	}
 	
+	/**
+	 * Uploads the user selected picture to Facebook Event
+	 * @param session
+	 */
 	private void uploadEventPicture(final Session session) {
 		if (photoUri != null) {
 			Bundle params = new Bundle();
@@ -355,13 +389,22 @@ public class SelectionFragment extends Fragment {
 		} 
 	}
 	
+	/**
+	 * Converts selected picture to bitmap
+	 * @param image
+	 * @return
+	 */
 	private Bitmap getImageFormData(File image) {
 	    return BitmapFactory.decodeFile(image.getPath());
 	}
 	
+	/**
+	 * Updates the current Facebook Event
+	 * @param session
+	 */
 	private void updateEvent(final Session session) {
 		Bundle params = new Bundle();
-		params.putString("start_time", weddingDate.getWeddingDate(new SimpleDateFormat("yyyy-MM-dd", Locale.US)));
+		params.putString("start_time", weddingDate.getDate(new SimpleDateFormat("yyyy-MM-dd", Locale.US)));
 		params.putString("description", noticeMessageView.getText().toString());
 		Toast.makeText(getActivity(), "Updating Facebook event...", Toast.LENGTH_LONG).show();
 		if (session != null && session.isOpened()) {
@@ -372,14 +415,18 @@ public class SelectionFragment extends Fragment {
 			        	if (response.getError() != null) {
 			        		Log.e(TAG, response.getError().toString());
 			        	} 
+			        	inviteRecipients(session);
+						uploadEventPicture(session);
+			        	onEventChangeListener.onEventUpdated(weddingDate);
 			        }
 			    }
 			).executeAsync();
-			inviteRecipients(session);
-			uploadEventPicture(session);
 		}
 	}
 	
+	/**
+	 * Displays AlertDialog that gives user the choice to update the Facebook Event or Cancel
+	 */
 	private void showUpdateEventChoice() {		
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         CharSequence update = "Update";
@@ -399,6 +446,10 @@ public class SelectionFragment extends Fragment {
         builder.show();
     }
 	
+	/**
+	 * Gets user data from Facebook
+	 * @param session
+	 */
 	private void makeMeRequest(final Session session) {
 	    // Make an API call to get user data and define a 
 	    // new callback to handle the response.
@@ -426,6 +477,10 @@ public class SelectionFragment extends Fragment {
 	    request.executeAsync();
 	}
 	
+	/**
+	 * Converts selected photo Uri to File
+	 * @return
+	 */
 	private File getWeddingPhotoFile() {
 		File photoFile = null;
         String photoUriString = photoUri.toString();
@@ -493,7 +548,7 @@ public class SelectionFragment extends Fragment {
 		weddingDate.setYear(year);
 		weddingDate.setMonth(monthOfYear);
 		weddingDate.setDayOfMonth(dayOfMonth);
-		weddingDateView.setText(weddingDate.getWeddingDate());
+		weddingDateView.setText(weddingDate.toString());
 	}
 	
 	private void updateWeddingPhotoView() {
@@ -754,5 +809,4 @@ public class SelectionFragment extends Fragment {
 			super.show(manager, DATE_PICKER);
 		}
 	}
-
 }

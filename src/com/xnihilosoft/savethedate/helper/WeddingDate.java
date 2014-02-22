@@ -2,7 +2,11 @@ package com.xnihilosoft.savethedate.helper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 public class WeddingDate  {
 	
@@ -42,12 +46,22 @@ public class WeddingDate  {
 		calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 	}
 	
-	public String getWeddingDate() {
+	public String toString() {
 		return dateFormat.format(calendar.getTime());
 	}
 	
-	public String getWeddingDate(SimpleDateFormat format) {
+	public String getDate(SimpleDateFormat format) {
 		return format.format(calendar.getTime());
+	}
+	
+	public Date getDate() {
+		return calendar.getTime();
+	}
+	
+	public int getDaysUntilWedding() {
+		DateTime weddingDay = new DateTime(this.getDate());
+		DateTime today = new DateTime(Calendar.getInstance().getTime());
+		return Days.daysBetween(today, weddingDay).getDays();
 	}
 	
 }

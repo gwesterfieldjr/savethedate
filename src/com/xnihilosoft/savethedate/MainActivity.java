@@ -1,6 +1,9 @@
 package com.xnihilosoft.savethedate;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,15 +15,20 @@ import android.view.MenuItem;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.xnihilosoft.savethedate.SelectionFragment.OnEventChangeListener;
+import com.xnihilosoft.savethedate.helper.WeddingDate;
 
 public class MainActivity extends FragmentActivity {
 
 	private static final int SPLASH = 0;
 	private static final int SELECTION = 1;
-	private static final int LOGOUT = 2;
-	private static final int FRAGMENT_COUNT = 3;
+	private static final int POST_SELECTION = 2;
+	private static final int LOGOUT = 3;
+	private static final int FRAGMENT_COUNT = 4;
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 	private MenuItem logout;
+	
+	private String eventId = "";
 	
 	private boolean isResumed = false;
 	
@@ -31,10 +39,25 @@ public class MainActivity extends FragmentActivity {
 	        onSessionStateChange(session, state, exception);
 	    }
 	};
-
+	
+	private OnEventChangeListener onEventChangeListener = new OnEventChangeListener() {
+		
+		@Override
+		public void onEventUpdated(WeddingDate weddingDate) {
+			onUpdatedEvent(weddingDate);
+		}
+		
+		@Override
+		public void onEventCreated(String eventId, WeddingDate weddingDate) {
+			onCreatedEvent(eventId, weddingDate);
+		}
+	};
+		
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    
+	    loadData();
 	    
 	    uiHelper = new UiLifecycleHelper(this, callback);
 	    uiHelper.onCreate(savedInstanceState);
@@ -44,8 +67,9 @@ public class MainActivity extends FragmentActivity {
 	    FragmentManager fm = getSupportFragmentManager();
 	    fragments[SPLASH] = fm.findFragmentById(R.id.splashFragment);
 	    fragments[SELECTION] = fm.findFragmentById(R.id.selectionFragment);
+	    fragments[POST_SELECTION] = fm.findFragmentById(R.id.postSelectionFragment);
 	    fragments[LOGOUT] = fm.findFragmentById(R.id.logoutFragment);
-
+	    
 	    FragmentTransaction transaction = fm.beginTransaction();
 	    for(int i = 0; i < fragments.length; i++) {
 	        transaction.hide(fragments[i]);
@@ -65,6 +89,7 @@ public class MainActivity extends FragmentActivity {
 	    super.onPause();
 	    uiHelper.onPause();
 	    isResumed = false;
+	    saveData();
 	}
 	
 	@Override
@@ -84,7 +109,7 @@ public class MainActivity extends FragmentActivity {
 	    super.onSaveInstanceState(outState);
 	    uiHelper.onSaveInstanceState(outState);
 	}
-
+	
 	private void showFragment(int fragmentIndex, boolean addToBackStack) {
 	    FragmentManager fm = getSupportFragmentManager();
 	    FragmentTransaction transaction = fm.beginTransaction();
@@ -114,7 +139,11 @@ public class MainActivity extends FragmentActivity {
 	        if (state.isOpened()) {
 	            // If the session state is open:
 	            // Show the authenticated fragment
-	            showFragment(SELECTION, false);
+	        	if (eventId.isEmpty()) {
+		    		showFragment(SELECTION, false);
+		    	} else {
+		    		showFragment(POST_SELECTION, false);
+		    	}
 	        } else if (state.isClosed()) {
 	            // If the session state is closed:
 	            // Show the login fragment
@@ -123,15 +152,31 @@ public class MainActivity extends FragmentActivity {
 	    }
 	}
 	
+	private void loadData() {
+		SharedPreferences data = this.getPreferences(Context.MODE_PRIVATE);
+		eventId = data.getString(getString(R.string.saved_event_id), "");
+	}
+	
+	@SuppressLint("CommitPrefEdits")
+	private void saveData() {
+		SharedPreferences data = this.getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = data.edit();
+		editor.putString(getString(R.string.saved_event_id), eventId);
+	}
+	
 	@Override
 	protected void onResumeFragments() {
 	    super.onResumeFragments();
 	    Session session = Session.getActiveSession();
-
+	   
 	    if (session != null && session.isOpened()) {
 	        // if the session is already open,
 	        // try to show the selection fragment
-	        showFragment(SELECTION, false);
+	    	if (eventId.isEmpty()) {
+	    		showFragment(SELECTION, false);
+	    	} else {
+	    		showFragment(POST_SELECTION, false);
+	    	}
 	    } else {
 	        // otherwise present the splash screen
 	        // and ask the person to login.
@@ -142,7 +187,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 	    // only add the menu when the selection fragment is showing
-	    if (fragments[SELECTION].isVisible()) {
+	    if (fragments[SELECTION].isVisible() || fragments[POST_SELECTION].isVisible()) {
 	        if (menu.size() == 0) {
 	        	logout = menu.add(R.string.logout);
 	        }
@@ -161,6 +206,25 @@ public class MainActivity extends FragmentActivity {
 	        return true;
 	    }
 	    return false;
+	}
+	
+	
+	public OnEventChangeListener getOnEventChangeListener() {
+		return onEventChangeListener;
+	}
+	
+	private void onUpdatedEvent(WeddingDate weddingDate) {
+		PostSelectionFragment postSelectionFragment = (PostSelectionFragment) fragments[POST_SELECTION];
+		postSelectionFragment.updateWeddingDateView(weddingDate);
+		postSelectionFragment.updateWeddingDayCountView(weddingDate);
+	}
+	
+	private void onCreatedEvent(String eventId, WeddingDate weddingDate) {
+		this.eventId = eventId;
+		PostSelectionFragment postSelectionFragment = (PostSelectionFragment) fragments[POST_SELECTION];
+		postSelectionFragment.updateWeddingDateView(weddingDate);
+		postSelectionFragment.updateWeddingDayCountView(weddingDate);
+		showFragment(POST_SELECTION, false);
 	}
 	
 }

@@ -29,18 +29,21 @@
 	<string name="two_users_selected">%1$s and %2$s</string>
 	<string name="multiple_users_selected">%1$s and %2$s others</string>
 	<string name="selected_user_count">%1$s recipients</string>
+	
+	
+	
 	<string name="saved_wedding_day">saved_wedding_day</string>
 	<string name="saved_wedding_month">saved_wedding_month</string>  
 	<string name="saved_wedding_year">saved_wedding_year</string>
 	<string name="saved_event_id">saved_event_id</string>
 	<string name="saved_photo_uri">saved_photo_uri</string>
 	<string name="saved_temp_uri">saved_temp_uri</string>
-	
 	<string name="saved_notice_message">saved_notice_message</string>
-	
 	<string name="saved_user">saved_user</string>
 	<string name="saved_significant_other">saved_significant_other</string>
-	
 	<string name="saved_recipients_list">saved_recipients_list</string>
 
+	<string name="postselection_days_till_wedding">Days till the wedding</string>
+	<string name="postselection_days_till_wedding_count">0</string>
+	
 </resources>

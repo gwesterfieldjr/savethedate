@@ -12,7 +12,6 @@ public class SaveTheDateApplication extends Application {
 	private List<GraphUser> recipientsList;
 	private GraphUser significantOther;
 	private WeddingDate weddingDate;
-	private String noticeMessage;
 
 	public List<GraphUser> getRecipientsList() {
 		return recipientsList;
@@ -28,14 +27,6 @@ public class SaveTheDateApplication extends Application {
 
 	public void setWeddingDate(WeddingDate weddingDate) {
 		this.weddingDate = weddingDate;
-	}
-
-	public String getNoticeMessage() {
-		return noticeMessage;
-	}
-
-	public void setNoticeMessage(String noticeMessage) {
-		this.noticeMessage = noticeMessage;
 	}
 
 	public GraphUser getSignificantOther() {

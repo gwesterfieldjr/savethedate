@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C3C3E5" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    	android:layout_centerVertical="true"
+    	android:background="#C3C3E5">
+
+        <TextView
+            android:id="@+id/postselection_days_till_weddding_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/circle_border_white"
+            android:text="@string/postselection_days_till_wedding_count"
+            android:textColor="#443266"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            android:typeface="serif" />
+
+        <TextView
+            android:id="@+id/postselection_days_till_wedding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="100dp"
+            android:text="@string/postselection_days_till_wedding"
+            android:textColor="#443266"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:typeface="serif" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.UiLifecycleHelper;
 import com.xnihilosoft.savethedate.helper.WeddingDate;
 
 public class PostSelectionFragment extends Fragment {
@@ -21,8 +20,6 @@ public class PostSelectionFragment extends Fragment {
 	
 	private TextView weddingDayCountView;
 	private TextView weddingDateView;
-	
-	private UiLifecycleHelper uiHelper;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,14 +38,6 @@ public class PostSelectionFragment extends Fragment {
 		}
 		
 		return view;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-
-	    uiHelper = new UiLifecycleHelper(this, callback);
-	    uiHelper.onCreate(savedInstanceState);
 	}
 	
 	protected void updateWeddingDateView(WeddingDate weddingDate) {

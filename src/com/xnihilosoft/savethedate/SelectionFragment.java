@@ -83,11 +83,12 @@ public class SelectionFragment extends Fragment {
 	private TextView dateView, weddingDateView, recipientsView, recipientsCountView, photoView, weddingPhotoView;
 	private Button saveTheDateButton;
 	private DatePickerFragment datePickerFragment;
-	private OnEventChangeListener onEventChangeListener;
+	private OnSelectionFragmentChangeListener onSelectionFragmentChangeListener;
 	
-	public interface OnEventChangeListener {
+	public interface OnSelectionFragmentChangeListener {
 		public void onEventCreated(String eventId, WeddingDate weddingDate);
 		public void onEventUpdated(WeddingDate weddingDate);
+		public void onActivityResult();
 	}
 	
 	// Facebook login handle objects
@@ -275,9 +276,9 @@ public class SelectionFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			onEventChangeListener = (OnEventChangeListener) (((MainActivity) activity).getOnEventChangeListener());
+			onSelectionFragmentChangeListener = (OnSelectionFragmentChangeListener) (((MainActivity) activity).getOnSelectionFragmentChangeListener());
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " implement/supply a reference to OnEventChangeListener\n" + e.getMessage());
+			throw new ClassCastException(activity.toString() + " implement/supply a reference to OnSelectionFragmentChangeListener\n" + e.getMessage());
 		}
 	}
 	
@@ -303,6 +304,7 @@ public class SelectionFragment extends Fragment {
             }
             updateWeddingPhotoView();
 	    }
+	    onSelectionFragmentChangeListener.onActivityResult();
 	}
 
 	/**
@@ -326,7 +328,7 @@ public class SelectionFragment extends Fragment {
 		        		if (!eventId.isEmpty() && eventId != null) {
 		        			inviteRecipients(session);
 		        			uploadEventPicture(session);
-		        			onEventChangeListener.onEventCreated(eventId, weddingDate);
+		        			onSelectionFragmentChangeListener.onEventCreated(eventId, weddingDate);
 		        		}
 		        		
 			        	if (response.getError() != null) {
@@ -417,7 +419,7 @@ public class SelectionFragment extends Fragment {
 			        	} 
 			        	inviteRecipients(session);
 						uploadEventPicture(session);
-			        	onEventChangeListener.onEventUpdated(weddingDate);
+						onSelectionFragmentChangeListener.onEventUpdated(weddingDate);
 			        }
 			    }
 			).executeAsync();

@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.xnihilosoft.savethedate.SelectionFragment.OnEventChangeListener;
+import com.xnihilosoft.savethedate.SelectionFragment.OnSelectionFragmentChangeListener;
 import com.xnihilosoft.savethedate.helper.WeddingDate;
 
 public class MainActivity extends FragmentActivity {
@@ -33,6 +33,7 @@ public class MainActivity extends FragmentActivity {
 	private String eventId = "";
 	
 	private boolean isResumed = false;
+	private boolean isActivityResult = false;
 	
 	private UiLifecycleHelper uiHelper;
 	private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -42,8 +43,7 @@ public class MainActivity extends FragmentActivity {
 	    }
 	};
 	
-	private OnEventChangeListener onEventChangeListener = new OnEventChangeListener() {
-		
+	private OnSelectionFragmentChangeListener onSelectionFragmentChangeListener = new OnSelectionFragmentChangeListener() {
 		@Override
 		public void onEventUpdated(WeddingDate weddingDate) {
 			onUpdatedEvent(weddingDate);
@@ -52,6 +52,11 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public void onEventCreated(String eventId, WeddingDate weddingDate) {
 			onCreatedEvent(eventId, weddingDate);
+		}
+
+		@Override
+		public void onActivityResult() {
+			isActivityResult = true;
 		}
 	};
 		
@@ -97,7 +102,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
-	    uiHelper.onActivityResult(requestCode, resultCode, data);
+	    uiHelper.onActivityResult(requestCode, resultCode, data); 
 	}
 
 	@Override
@@ -177,13 +182,20 @@ public class MainActivity extends FragmentActivity {
 	    	if (eventId.isEmpty()) {
 	    		showFragment(SELECTION, false);
 	    	} else {
-	    		showFragment(POST_SELECTION, false);
+	    		
+	    		if (isActivityResult) {
+	    			showFragment(SELECTION, false);
+	    		} else {
+	    			showFragment(POST_SELECTION, false);
+	    		}
+	    	
 	    	}
 	    } else {
 	        // otherwise present the splash screen
 	        // and ask the person to login.
 	        showFragment(SPLASH, false);
 	    }
+	    isActivityResult = false;
 	}
 
 	@Override
@@ -236,8 +248,8 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	
-	public OnEventChangeListener getOnEventChangeListener() {
-		return onEventChangeListener;
+	public OnSelectionFragmentChangeListener getOnSelectionFragmentChangeListener() {
+		return onSelectionFragmentChangeListener;
 	}
 	
 	private void onUpdatedEvent(WeddingDate weddingDate) {

@@ -29,6 +29,11 @@
 	<string name="two_users_selected">%1$s and %2$s</string>
 	<string name="multiple_users_selected">%1$s and %2$s others</string>
 	<string name="selected_user_count">%1$s recipients</string>
+	<string name="view_countdown">Countdown</string>
+	<string name="update_notice">Update Notice</string>
+	<string name="share">Share</string>
+	<string name="overflow">Action Overflow</string>
+	<string name="share_action_facebook">Facebook</string>
 	
 	
 	

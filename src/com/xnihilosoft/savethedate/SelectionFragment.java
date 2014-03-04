@@ -31,6 +31,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -75,7 +78,7 @@ public class SelectionFragment extends Fragment {
 	private Uri photoUri = null;
 	private Uri tempUri = null;
 	
-	// UI stuff: views, fragments
+	// UI stuff: views, fragments, menuItems
 	private ListView listView;
 	private List<PersonListElement> personListElements;
 	private EditText noticeMessageView;
@@ -83,6 +86,7 @@ public class SelectionFragment extends Fragment {
 	private TextView dateView, weddingDateView, recipientsView, recipientsCountView, photoView, weddingPhotoView;
 	private Button saveTheDateButton;
 	private DatePickerFragment datePickerFragment;
+	
 	private OnSelectionFragmentChangeListener onSelectionFragmentChangeListener;
 	
 	public interface OnSelectionFragmentChangeListener {

@@ -1,6 +1,12 @@
 package com.xnihilosoft.savethedate;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,8 +15,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewConfiguration;
+import android.widget.ArrayAdapter;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -26,10 +35,16 @@ public class MainActivity extends FragmentActivity {
 	private static final int LOGOUT = 3;
 	private static final int FRAGMENT_COUNT = 4;
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
-	private MenuItem logout;
-	private MenuItem updateEvent;
-	private MenuItem countdown;
 	
+	private ArrayAdapter<String> arrayAdapter;
+	private ActionBar actionBar;
+	
+	private List<String> navigationItems;
+	private static final int UPDATE_NOTICE = 0;
+	private static final int COUNTDOWN = 1;
+
+	private MenuItem shareItem, logoutItem;
+		
 	private String eventId = "";
 	
 	private boolean isResumed = false;
@@ -66,6 +81,12 @@ public class MainActivity extends FragmentActivity {
 	    
 	    loadData();
 	    
+	    displayOverflowActionIcon();
+	    
+	    if (!eventId.isEmpty()) {
+	    	createNavigationSpinner();
+	    }
+	    
 	    uiHelper = new UiLifecycleHelper(this, callback);
 	    uiHelper.onCreate(savedInstanceState);
 	    
@@ -82,6 +103,7 @@ public class MainActivity extends FragmentActivity {
 	        transaction.hide(fragments[i]);
 	    }
 	    transaction.commit();
+	    
 	}
 	
 	@Override
@@ -130,7 +152,10 @@ public class MainActivity extends FragmentActivity {
 	    if (addToBackStack) {
 	        transaction.addToBackStack(null);
 	    }
+	    
 	    transaction.commit();
+	    invalidateOptionsMenu();
+	    updateNavigationSpinner(fragmentIndex);
 	}
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
@@ -182,13 +207,12 @@ public class MainActivity extends FragmentActivity {
 	    	if (eventId.isEmpty()) {
 	    		showFragment(SELECTION, false);
 	    	} else {
-	    		
+	    		createNavigationSpinner();
 	    		if (isActivityResult) {
 	    			showFragment(SELECTION, false);
 	    		} else {
 	    			showFragment(POST_SELECTION, false);
 	    		}
-	    	
 	    	}
 	    } else {
 	        // otherwise present the splash screen
@@ -198,56 +222,118 @@ public class MainActivity extends FragmentActivity {
 	    isActivityResult = false;
 	}
 
+	/**
+	 * This is needed to make sure the action overflow icon appears on devices that have a menu button
+	 */
+	private void displayOverflowActionIcon() {
+		try {
+	    	  ViewConfiguration config = ViewConfiguration.get(this);
+	    	  Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+
+	    	  if (menuKeyField != null) {
+	    	    menuKeyField.setAccessible(true);
+	    	    menuKeyField.setBoolean(config, false);
+	    	  }
+	    	}
+	    catch (Exception e) {
+	    	 Log.e("MAIN", "Failed to force overflow icon on the Action Bar.");
+	   	}
+	}
+
+	private void createNavigationSpinner() {
+		navigationItems = new ArrayList<String>();
+	    navigationItems.add(getString(R.string.update_notice));
+	    navigationItems.add(getString(R.string.view_countdown));
+	    
+	    arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, navigationItems);
+	    
+        //Enabling dropdown list navigation for the action bar
+	    actionBar = getActionBar();
+	    actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+ 
+        ActionBar.OnNavigationListener navigationListener = new OnNavigationListener() {
+            @Override
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                if (itemPosition == UPDATE_NOTICE) {
+                	showFragment(SELECTION, false);
+                } else if (itemPosition == COUNTDOWN) {
+                	showFragment(POST_SELECTION, false);
+                }
+                return true;
+            }
+        };
+ 
+        //Setting dropdown items and item navigation listener for the actionbar
+        actionBar.setListNavigationCallbacks(arrayAdapter, navigationListener);
+	}
+	
+	private void updateNavigationSpinner(int fragmentIndex) {
+		if (!eventId.isEmpty()) {
+		    if (fragmentIndex == SELECTION) {
+		    	actionBar.setSelectedNavigationItem(UPDATE_NOTICE);
+		    } else if (fragmentIndex == POST_SELECTION) {
+		    	actionBar.setSelectedNavigationItem(COUNTDOWN);
+		    } else {
+		    	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		    	actionBar.setDisplayShowTitleEnabled(true);
+		    }
+	    } else {
+	    	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	    	actionBar.setDisplayShowTitleEnabled(true);
+	    }
+	}
+		
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-	    // only add the menu when the selection fragment is showing
 	    if (fragments[SELECTION].isVisible()) {
-	    	if (menu.size() == 0) {
-	        	logout = menu.add(R.string.logout);
-	        	countdown = menu.add("View Countdown");
-	        } else {
-	        	menu.clear();
-	    		logout = menu.add(R.string.logout);
-	    		countdown = menu.add("View Countdown");
-	    		updateEvent = null;
-	        }
+	    	updateSelectionMenu(menu);
 	    	return true;
 	    } else if (fragments[POST_SELECTION].isVisible()) {
-	    	if (menu.size() == 0 ) {
-	    		logout = menu.add(R.string.logout);
-	    		updateEvent = menu.add("Update Notice");
-	    	} else {
-	    		menu.clear();
-	    		logout = menu.add(R.string.logout);
-	    		updateEvent = menu.add("Update Notice");
-	    		countdown = null;
-	    	}
+	    	updatePostSelectionMenu(menu);
         	return true;
 	    } else {
 	        menu.clear();
-	        logout = null;
-	        updateEvent = null;
-	        countdown = null;
+	        logoutItem = null;
+	        shareItem = null;
 	    }
-	    return false;
+	    return super.onPrepareOptionsMenu(menu);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    if (item.equals(logout)) {
+	    if (item.equals(logoutItem)) {
 	        showFragment(LOGOUT, false);
 	        return true;
-	    } else if (item.equals(updateEvent)) {
-	    	showFragment(SELECTION, false);
-	    	return true;
-	    } else if (item.equals(countdown)) {
-	    	showFragment(POST_SELECTION, false);
-	    	return true;
+	    } else if (item.equals(shareItem)) {
+	    	showShareDialog();
 	    }
-	    return false;
+	    return super.onOptionsItemSelected(item);
 	}
 	
+	private void updateSelectionMenu(Menu menu) {
+		if (menu.size() != 0) {
+			menu.clear();
+		}
+		logoutItem = menu.add(R.string.logout);
+		shareItem = null;
+	}
 	
+	private void updatePostSelectionMenu(Menu menu) {
+		if (menu.size() != 0 ) {
+			menu.clear();
+    	}
+		shareItem = menu.add(R.id.action_share);
+		shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		shareItem.setIcon(R.drawable.ic_action_share);
+		shareItem.setTitle(R.string.share);
+		logoutItem = menu.add(R.string.logout);
+	}
+	
+	private void showShareDialog() {
+		// TODO
+	}
+		
 	public OnSelectionFragmentChangeListener getOnSelectionFragmentChangeListener() {
 		return onSelectionFragmentChangeListener;
 	}

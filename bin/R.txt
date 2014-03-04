@@ -38,7 +38,7 @@ int dimen com_facebook_profilepictureview_preset_size_normal 0x7f05000b
 int dimen com_facebook_profilepictureview_preset_size_small 0x7f05000a
 int dimen com_facebook_usersettingsfragment_profile_picture_height 0x7f050003
 int dimen com_facebook_usersettingsfragment_profile_picture_width 0x7f050002
-int drawable actionbar_background_color 0x7f020027
+int drawable actionbar_background_color 0x7f020028
 int drawable circle_border_white 0x7f020000
 int drawable com_facebook_button_blue 0x7f020001
 int drawable com_facebook_button_blue_focused 0x7f020002
@@ -56,7 +56,7 @@ int drawable com_facebook_list_divider 0x7f02000d
 int drawable com_facebook_list_section_header_background 0x7f02000e
 int drawable com_facebook_loginbutton_silver 0x7f02000f
 int drawable com_facebook_logo 0x7f020010
-int drawable com_facebook_picker_default_separator_color 0x7f020026
+int drawable com_facebook_picker_default_separator_color 0x7f020027
 int drawable com_facebook_picker_item_background 0x7f020011
 int drawable com_facebook_picker_list_focused 0x7f020012
 int drawable com_facebook_picker_list_longpressed 0x7f020013
@@ -75,9 +75,10 @@ int drawable com_facebook_top_button 0x7f02001f
 int drawable com_facebook_usersettingsfragment_background_gradient 0x7f020020
 int drawable ic_action_overflow 0x7f020021
 int drawable ic_action_share 0x7f020022
-int drawable ic_launcher 0x7f020023
-int drawable square_border_purple 0x7f020024
-int drawable square_border_white 0x7f020025
+int drawable ic_app_icon 0x7f020023
+int drawable ic_launcher 0x7f020024
+int drawable square_border_purple 0x7f020025
+int drawable square_border_white 0x7f020026
 int id action_logout 0x7f04002f
 int id action_settings 0x7f04002d
 int id action_share 0x7f04002e

@@ -183,7 +183,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_profile_picture_width=0x7f050002;
     }
     public static final class drawable {
-        public static final int actionbar_background_color=0x7f020028;
+        public static final int actionbar_background_color=0x7f020029;
         public static final int circle_border_white=0x7f020000;
         public static final int com_facebook_button_blue=0x7f020001;
         public static final int com_facebook_button_blue_focused=0x7f020002;
@@ -201,7 +201,7 @@ containing a value of this type.
         public static final int com_facebook_list_section_header_background=0x7f02000e;
         public static final int com_facebook_loginbutton_silver=0x7f02000f;
         public static final int com_facebook_logo=0x7f020010;
-        public static final int com_facebook_picker_default_separator_color=0x7f020027;
+        public static final int com_facebook_picker_default_separator_color=0x7f020028;
         public static final int com_facebook_picker_item_background=0x7f020011;
         public static final int com_facebook_picker_list_focused=0x7f020012;
         public static final int com_facebook_picker_list_longpressed=0x7f020013;
@@ -218,12 +218,13 @@ containing a value of this type.
         public static final int com_facebook_top_background=0x7f02001e;
         public static final int com_facebook_top_button=0x7f02001f;
         public static final int com_facebook_usersettingsfragment_background_gradient=0x7f020020;
-        public static final int ic_action_overflow=0x7f020021;
-        public static final int ic_action_share=0x7f020022;
-        public static final int ic_app_icon=0x7f020023;
-        public static final int ic_launcher=0x7f020024;
-        public static final int square_border_purple=0x7f020025;
-        public static final int square_border_white=0x7f020026;
+        public static final int fb_share_btn=0x7f020021;
+        public static final int ic_action_overflow=0x7f020022;
+        public static final int ic_action_share=0x7f020023;
+        public static final int ic_app_icon=0x7f020024;
+        public static final int ic_launcher=0x7f020025;
+        public static final int square_border_purple=0x7f020026;
+        public static final int square_border_white=0x7f020027;
     }
     public static final class id {
         public static final int action_logout=0x7f04002f;
@@ -298,7 +299,9 @@ containing a value of this type.
         public static final int pickers=0x7f030010;
         public static final int postselection=0x7f030011;
         public static final int selection=0x7f030012;
-        public static final int splash=0x7f030013;
+        public static final int share_item=0x7f030013;
+        public static final int share_listview=0x7f030014;
+        public static final int splash=0x7f030015;
     }
     public static final class menu {
         public static final int main=0x7f090000;

@@ -80,13 +80,9 @@ public class MainActivity extends FragmentActivity {
 	    super.onCreate(savedInstanceState);
 	    
 	    loadData();
-	    
 	    displayOverflowActionIcon();
-	    
-	    if (!eventId.isEmpty()) {
-	    	createNavigationSpinner();
-	    }
-	    
+	    createActionBar();
+	   	    
 	    uiHelper = new UiLifecycleHelper(this, callback);
 	    uiHelper.onCreate(savedInstanceState);
 	    
@@ -103,7 +99,6 @@ public class MainActivity extends FragmentActivity {
 	        transaction.hide(fragments[i]);
 	    }
 	    transaction.commit();
-	    
 	}
 	
 	@Override
@@ -155,7 +150,7 @@ public class MainActivity extends FragmentActivity {
 	    
 	    transaction.commit();
 	    invalidateOptionsMenu();
-	    updateNavigationSpinner(fragmentIndex);
+	    updateActionBar(fragmentIndex);
 	}
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
@@ -207,7 +202,6 @@ public class MainActivity extends FragmentActivity {
 	    	if (eventId.isEmpty()) {
 	    		showFragment(SELECTION, false);
 	    	} else {
-	    		createNavigationSpinner();
 	    		if (isActivityResult) {
 	    			showFragment(SELECTION, false);
 	    		} else {
@@ -240,7 +234,7 @@ public class MainActivity extends FragmentActivity {
 	   	}
 	}
 
-	private void createNavigationSpinner() {
+	private void createActionBar() {
 		navigationItems = new ArrayList<String>();
 	    navigationItems.add(getString(R.string.update_notice));
 	    navigationItems.add(getString(R.string.view_countdown));
@@ -249,8 +243,12 @@ public class MainActivity extends FragmentActivity {
 	    
         //Enabling dropdown list navigation for the action bar
 	    actionBar = getActionBar();
-	    actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+	    
+	    if (!eventId.isEmpty()) {
+	    	updateNavigationDisplay(ActionBar.NAVIGATION_MODE_LIST, false);
+	    } else {
+	    	updateNavigationDisplay(ActionBar.NAVIGATION_MODE_STANDARD, true);
+	    }
  
         ActionBar.OnNavigationListener navigationListener = new OnNavigationListener() {
             @Override
@@ -268,29 +266,34 @@ public class MainActivity extends FragmentActivity {
         actionBar.setListNavigationCallbacks(arrayAdapter, navigationListener);
 	}
 	
-	private void updateNavigationSpinner(int fragmentIndex) {
+	private void updateActionBar(int fragmentIndex) {
 		if (!eventId.isEmpty()) {
 		    if (fragmentIndex == SELECTION) {
+		    	updateNavigationDisplay(ActionBar.NAVIGATION_MODE_LIST, false);
 		    	actionBar.setSelectedNavigationItem(UPDATE_NOTICE);
 		    } else if (fragmentIndex == POST_SELECTION) {
+		    	updateNavigationDisplay(ActionBar.NAVIGATION_MODE_LIST, false);
 		    	actionBar.setSelectedNavigationItem(COUNTDOWN);
 		    } else {
-		    	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		    	actionBar.setDisplayShowTitleEnabled(true);
+		    	updateNavigationDisplay(ActionBar.NAVIGATION_MODE_STANDARD, true);
 		    }
 	    } else {
-	    	actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-	    	actionBar.setDisplayShowTitleEnabled(true);
+	    	updateNavigationDisplay(ActionBar.NAVIGATION_MODE_STANDARD, true);
 	    }
+	}
+	
+	private void updateNavigationDisplay(int navigationMode, boolean isTitleEnabled) {
+		actionBar.setNavigationMode(navigationMode);
+    	actionBar.setDisplayShowTitleEnabled(isTitleEnabled);
 	}
 		
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 	    if (fragments[SELECTION].isVisible()) {
-	    	updateSelectionMenu(menu);
+	    	updateMenu(menu, SELECTION);
 	    	return true;
 	    } else if (fragments[POST_SELECTION].isVisible()) {
-	    	updatePostSelectionMenu(menu);
+	    	updateMenu(menu, POST_SELECTION);
         	return true;
 	    } else {
 	        menu.clear();
@@ -306,32 +309,39 @@ public class MainActivity extends FragmentActivity {
 	        showFragment(LOGOUT, false);
 	        return true;
 	    } else if (item.equals(shareItem)) {
-	    	showShareDialog();
+	    	Intent share = new Intent(Intent.ACTION_SEND);
+	    	if (fragments[POST_SELECTION].isVisible()) {
+	    		PostSelectionFragment postSelectionFragment = (PostSelectionFragment) fragments[POST_SELECTION];
+	    		WeddingDate wd = postSelectionFragment.getWeddingDate();
+	    		int daysTillWedding = wd.getDaysUntilWedding();
+	    		share.setType("text/plain");
+	    		share.putExtra(Intent.EXTRA_SUBJECT, "Days until Wedding");
+	    		share.putExtra(Intent.EXTRA_TEXT, "I get married in " + daysTillWedding + " days!");
+	    	}
+	    	showShareDialog(share);
 	    }
 	    return super.onOptionsItemSelected(item);
 	}
 	
-	private void updateSelectionMenu(Menu menu) {
-		if (menu.size() != 0) {
-			menu.clear();
-		}
-		logoutItem = menu.add(R.string.logout);
-		shareItem = null;
-	}
-	
-	private void updatePostSelectionMenu(Menu menu) {
+	private void updateMenu(Menu menu, int fragmentId) {
 		if (menu.size() != 0 ) {
 			menu.clear();
     	}
-		shareItem = menu.add(R.id.action_share);
-		shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		shareItem.setIcon(R.drawable.ic_action_share);
-		shareItem.setTitle(R.string.share);
-		logoutItem = menu.add(R.string.logout);
+		
+		if (fragmentId == SELECTION) {
+			logoutItem = menu.add(R.string.logout);
+			shareItem = null;
+		} else if (fragmentId == POST_SELECTION) {
+			shareItem = menu.add(R.id.action_share);
+			shareItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			shareItem.setIcon(R.drawable.ic_action_share);
+			shareItem.setTitle(R.string.share);
+			logoutItem = menu.add(R.string.logout);
+		} 
 	}
 	
-	private void showShareDialog() {
-		// TODO
+	private void showShareDialog(Intent intent) {
+		startActivity(Intent.createChooser(intent, "Share via"));
 	}
 		
 	public OnSelectionFragmentChangeListener getOnSelectionFragmentChangeListener() {

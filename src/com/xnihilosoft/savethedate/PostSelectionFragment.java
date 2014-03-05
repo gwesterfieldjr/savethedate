@@ -35,7 +35,6 @@ public class PostSelectionFragment extends Fragment {
 	    }
 	};
 	
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -67,6 +66,10 @@ public class PostSelectionFragment extends Fragment {
 	
 	protected void setWeddingDate(WeddingDate weddingDate) {
 		this.weddingDate = weddingDate;
+	}
+	
+	public WeddingDate getWeddingDate() {
+		return this.weddingDate;
 	}
 		
 	private void loadData() {

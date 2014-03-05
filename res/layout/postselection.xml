@@ -5,20 +5,20 @@
     android:background="#C3C3E5" >
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-    	android:layout_centerInParent="true"
-    	android:background="#C3C3E5">
+        android:layout_centerInParent="true"
+        android:background="#C3C3E5"
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/postselection_days_till_weddding_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_marginBottom="25dp"
             android:background="@drawable/circle_border_white"
+            android:gravity="center"
             android:text="@string/postselection_days_till_wedding_count"
             android:textColor="#443266"
             android:textSize="64sp"
@@ -35,6 +35,7 @@
             android:textSize="32sp"
             android:textStyle="bold"
             android:typeface="serif" />
+
     </LinearLayout>
 
 </RelativeLayout>
